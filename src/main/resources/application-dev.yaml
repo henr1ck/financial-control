@@ -12,6 +12,9 @@ spring:
   jpa:
     generete-ddl: false
 
+  flyway:
+    locations: [classpath:db/migration, classpath:db/callback]
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
