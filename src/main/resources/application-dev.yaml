@@ -15,6 +15,10 @@ spring:
   flyway:
     locations: [classpath:db/migration, classpath:db/callback]
 
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+
 logging:
   level:
     org.hibernate.SQL: DEBUG

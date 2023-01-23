@@ -3,18 +3,16 @@ package br.edu.ifpi.financialcontrol.service.impl;
 import br.edu.ifpi.financialcontrol.domain.Category;
 import br.edu.ifpi.financialcontrol.domain.Flow;
 import br.edu.ifpi.financialcontrol.domain.Type;
+import br.edu.ifpi.financialcontrol.exception.FlowNotFoundException;
 import br.edu.ifpi.financialcontrol.repository.FlowRepository;
 import br.edu.ifpi.financialcontrol.service.CategoryService;
 import br.edu.ifpi.financialcontrol.service.FlowService;
 import br.edu.ifpi.financialcontrol.service.TypeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +24,7 @@ public class FlowServiceImpl implements FlowService {
     @Override
     public Flow findByCodeOrThrowBadRequestException(String code) {
         return flowRepository.findByCode(code)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new FlowNotFoundException(String.format("Flow with code %s not found", code)));
     }
 
     @Override

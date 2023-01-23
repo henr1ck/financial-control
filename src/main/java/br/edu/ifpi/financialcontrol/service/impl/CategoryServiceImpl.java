@@ -1,13 +1,12 @@
 package br.edu.ifpi.financialcontrol.service.impl;
 
 import br.edu.ifpi.financialcontrol.domain.Category;
+import br.edu.ifpi.financialcontrol.exception.CategoryNotFoundException;
 import br.edu.ifpi.financialcontrol.repository.CategoryRepository;
 import br.edu.ifpi.financialcontrol.service.CategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category findByIdOrThrowBadRequestException(Long id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new CategoryNotFoundException(String.format("Category with id %d not found", id)));
     }
 
     @Override
