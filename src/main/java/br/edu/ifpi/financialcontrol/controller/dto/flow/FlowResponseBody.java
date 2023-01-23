@@ -9,13 +9,14 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class FlowResponseBody {
-    private Long id;
+    private String code;
     private String description;
     private BigDecimal value;
     private String note;

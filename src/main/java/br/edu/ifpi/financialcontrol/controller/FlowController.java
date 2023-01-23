@@ -31,9 +31,9 @@ public class FlowController {
         return ResponseEntity.ok(flowResponseBodies);
     }
 
-    @GetMapping(path = "/{flowId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FlowResponseBody> findById(@PathVariable Long flowId) {
-        Flow flowFound = flowService.findByIdOrThrowBadRequestException(flowId);
+    @GetMapping(path = "/{flowCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<FlowResponseBody> findById(@PathVariable String flowCode) {
+        Flow flowFound = flowService.findByCodeOrThrowBadRequestException(flowCode);
         FlowResponseBody flowResponseBody = convertToRepresentationObject(flowFound);
 
         return ResponseEntity.ok(flowResponseBody);
@@ -48,17 +48,17 @@ public class FlowController {
         return ResponseEntity.ok(flowResponseBody);
     }
 
-    @PutMapping(path = "/{flowId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@PathVariable Long flowId, @RequestBody FlowRequestBody flow) {
+    @PutMapping(path = "/{flowCode}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> update(@PathVariable String flowCode, @RequestBody FlowRequestBody flow) {
         Flow flowToBeUpdated = convertToDomainObject(flow);
-        flowService.update(flowId, flowToBeUpdated);
+        flowService.update(flowCode, flowToBeUpdated);
 
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(path = "/{flowId}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long flowId) {
-        flowService.deleteById(flowId);
+    @DeleteMapping(path = "/{flowCode}")
+    public ResponseEntity<Void> deleteById(@PathVariable String flowCode) {
+        flowService.deleteById(flowCode);
         return ResponseEntity.noContent().build();
     }
 

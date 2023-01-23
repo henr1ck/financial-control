@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +24,8 @@ public class FlowServiceImpl implements FlowService {
     private final TypeService typeService;
 
     @Override
-    public Flow findByIdOrThrowBadRequestException(Long id) {
-        return flowRepository.findById(id)
+    public Flow findByCodeOrThrowBadRequestException(String code) {
+        return flowRepository.findByCode(code)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
     }
 
@@ -50,23 +51,24 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void update(Long id, Flow flow) {
+    public void update(String code, Flow flow) {
         var categoryId = flow.getCategory().getId();
         categoryService.findByIdOrThrowBadRequestException(categoryId);
 
         var typeId = flow.getType().getId();
         typeService.findByIdOrThrowBadRequestException(typeId);
 
-        Flow flowToBeUpdated = findByIdOrThrowBadRequestException(id);
+        Flow flowToBeUpdated = findByCodeOrThrowBadRequestException(code);
         flow.setId(flowToBeUpdated.getId());
         flow.setDate(flowToBeUpdated.getDate());
 
+        flow.setCode(flowToBeUpdated.getCode());
         flowRepository.save(flow);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(Long id) {
-        flowRepository.delete(findByIdOrThrowBadRequestException(id));
+    public void deleteById(String code) {
+        flowRepository.delete(findByCodeOrThrowBadRequestException(code));
     }
 }
