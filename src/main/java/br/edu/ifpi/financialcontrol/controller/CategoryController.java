@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class CategoryController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoryResponseBody> save(@RequestBody CategoryRequestBody category){
+    public ResponseEntity<CategoryResponseBody> save(@Valid @RequestBody CategoryRequestBody category){
         Category categoryToBeSaved = convertToDomainObject(category);
         Category categorySaved = categoryService.save(categoryToBeSaved);
         CategoryResponseBody categoryResponseBody = convertToRepresentationObject(categorySaved);
@@ -49,7 +50,7 @@ public class CategoryController {
     }
 
     @PutMapping(path = "/{categoryId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@PathVariable Long categoryId, @RequestBody CategoryRequestBody category){
+    public ResponseEntity<Void> update(@PathVariable Long categoryId, @Valid @RequestBody CategoryRequestBody category){
         Category categoryToBeUpdated = convertToDomainObject(category);
         categoryService.update(categoryId, categoryToBeUpdated);
         return ResponseEntity.noContent().build();

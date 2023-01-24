@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class FlowController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FlowResponseBody> save(@RequestBody FlowRequestBody flow) {
+    public ResponseEntity<FlowResponseBody> save(@Valid @RequestBody FlowRequestBody flow) {
         Flow flowToBeSaved = convertToDomainObject(flow);
         Flow flowSaved = flowService.save(flowToBeSaved);
         FlowResponseBody flowResponseBody = convertToRepresentationObject(flowSaved);
@@ -49,7 +50,7 @@ public class FlowController {
     }
 
     @PutMapping(path = "/{flowCode}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@PathVariable String flowCode, @RequestBody FlowRequestBody flow) {
+    public ResponseEntity<Void> update(@PathVariable String flowCode, @Valid @RequestBody FlowRequestBody flow) {
         Flow flowToBeUpdated = convertToDomainObject(flow);
         flowService.update(flowCode, flowToBeUpdated);
 

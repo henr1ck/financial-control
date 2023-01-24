@@ -4,13 +4,17 @@ import br.edu.ifpi.financialcontrol.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -22,7 +26,10 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final MessageSource messageSource;
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ProblemDetails> handleResourceNotFoundException(ResourceNotFoundException exception){
@@ -34,6 +41,31 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(problemDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        List<FieldDetails> fieldDetails = ex.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> {
+                    String message = messageSource.getMessage(fieldError, Locale.getDefault());
+                    String fieldName = fieldError.getField();
+
+                    return FieldDetails.builder()
+                            .field(fieldName)
+                            .developerMessage(message)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        ProblemDetails problemDetails = ProblemDetails.builder()
+                .title("Validation error")
+                .detail("One or more properties aren't valid")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .timestamp(LocalDateTime.now())
+                .fields(fieldDetails)
+                .build();
+
+        return new ResponseEntity<>(problemDetails, status);
     }
 
     @Override
