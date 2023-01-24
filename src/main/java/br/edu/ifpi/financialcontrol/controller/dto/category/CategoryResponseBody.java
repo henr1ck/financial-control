@@ -1,5 +1,7 @@
 package br.edu.ifpi.financialcontrol.controller.dto.category;
 
+import br.edu.ifpi.financialcontrol.controller.view.FlowView;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

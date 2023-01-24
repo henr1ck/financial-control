@@ -2,8 +2,10 @@ package br.edu.ifpi.financialcontrol.controller;
 
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowRequestBody;
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowResponseBody;
+import br.edu.ifpi.financialcontrol.controller.view.FlowView;
 import br.edu.ifpi.financialcontrol.domain.Flow;
 import br.edu.ifpi.financialcontrol.service.FlowService;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
@@ -22,6 +24,7 @@ public class FlowController {
     private final FlowService flowService;
     private final ModelMapper modelMapper;
 
+    @JsonView(FlowView.Simple.class)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<FlowResponseBody>> findAll() {
         List<Flow> flows = flowService.findAll();

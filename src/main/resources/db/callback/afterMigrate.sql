@@ -8,3 +8,4 @@ alter table type auto_increment = 0;
 
 insert into type (name) values ('Entrada');
 insert into type (name) values ('Saída');
+insert into category (name) values ('Alimentação')
