@@ -1,9 +1,11 @@
 package br.edu.ifpi.financialcontrol.controller;
 
+import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowFilter;
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowRequestBody;
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowResponseBody;
 import br.edu.ifpi.financialcontrol.controller.view.FlowView;
 import br.edu.ifpi.financialcontrol.domain.Flow;
+import br.edu.ifpi.financialcontrol.repository.specification.FlowSpec;
 import br.edu.ifpi.financialcontrol.service.FlowService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +28,8 @@ public class FlowController {
 
     @JsonView(FlowView.Simple.class)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<FlowResponseBody>> findAll() {
-        List<Flow> flows = flowService.findAll();
+    public ResponseEntity<List<FlowResponseBody>> findAll(FlowFilter flowFilter) {
+        List<Flow> flows = flowService.findAll(FlowSpec.withFilter(flowFilter));
         List<FlowResponseBody> flowResponseBodies = flows.stream()
                 .map(this::convertToRepresentationObject)
                 .collect(Collectors.toList());

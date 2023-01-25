@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonView(FlowView.Simple.class)
 public class CategoryResponseBody {
     private Long id;
     private String name;

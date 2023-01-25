@@ -11,7 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,7 +32,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private final MessageSource messageSource;
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ProblemDetails> handleResourceNotFoundException(ResourceNotFoundException exception){
+    public ResponseEntity<ProblemDetails> handleResourceNotFoundException(ResourceNotFoundException exception) {
         ProblemDetails problemDetails = ProblemDetails.builder()
                 .title("Resource not found!")
                 .detail(exception.getMessage())
@@ -72,9 +72,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Throwable throwable = ex.getRootCause();
 
-        if (throwable instanceof UnrecognizedPropertyException){
+        if (throwable instanceof UnrecognizedPropertyException) {
             return handleUnrecognizedPropertyException((UnrecognizedPropertyException) throwable);
-        }else if (throwable instanceof JsonParseException){
+        } else if (throwable instanceof JsonParseException) {
             return handleJsonParseException((JsonParseException) throwable);
         }
 
@@ -88,8 +88,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(problemDetails, status);
     }
 
-    public ResponseEntity<Object> handleUnrecognizedPropertyException(UnrecognizedPropertyException exception){
-        List<JsonMappingException.Reference> pathReferences = exception.getPath();;
+    public ResponseEntity<Object> handleUnrecognizedPropertyException(UnrecognizedPropertyException exception) {
+        List<JsonMappingException.Reference> pathReferences = exception.getPath();
+        ;
 
         String propertyPath = pathReferences.stream()
                 .map(JsonMappingException.Reference::getFieldName)
@@ -130,7 +131,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
 
-        return new ResponseEntity<>(problemDetails,status);
+        return new ResponseEntity<>(problemDetails, status);
     }
 
     @Override
@@ -142,7 +143,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
 
-        return new ResponseEntity<>(problemDetails,status);
+        return new ResponseEntity<>(problemDetails, status);
     }
 
     @Override
@@ -158,6 +159,29 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .detail(String.format("%s value in path variable isn't a %s type", propertyName, typeName))
                 .status(status.value())
                 .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(problemDetails, status);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        List<FieldDetails> fieldDetails = ex.getFieldErrors().stream()
+                .map(fieldError -> {
+                    String message = messageSource.getMessage(fieldError, Locale.getDefault());
+                    return FieldDetails.builder()
+                            .field(fieldError.getField())
+                            .developerMessage(message)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        ProblemDetails problemDetails = ProblemDetails.builder()
+                .title("Type mismatch")
+                .detail("Failed to convert one or more parameter values")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .timestamp(LocalDateTime.now())
+                .fields(fieldDetails)
                 .build();
 
         return new ResponseEntity<>(problemDetails, status);

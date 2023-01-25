@@ -29,9 +29,11 @@ public class FlowResponseBody {
     @JsonView(FlowView.Simple.class)
     private TypeResponseBody type;
 
+    @JsonView(FlowView.Simple.class)
     private CategoryResponseBody category;
 
-    private String note;
-
+    @JsonView(FlowView.Simple.class)
     private OffsetDateTime date;
+
+    private String note;
 }
