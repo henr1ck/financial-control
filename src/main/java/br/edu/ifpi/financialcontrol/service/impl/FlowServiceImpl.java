@@ -10,6 +10,8 @@ import br.edu.ifpi.financialcontrol.service.CategoryService;
 import br.edu.ifpi.financialcontrol.service.FlowService;
 import br.edu.ifpi.financialcontrol.service.TypeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +32,8 @@ public class FlowServiceImpl implements FlowService {
     }
 
     @Override
-    public List<Flow> findAll(Specification<Flow> specification) {
-        return flowRepository.findAll(specification);
+    public Page<Flow> findAll(Specification<Flow> specification, Pageable pageable) {
+        return flowRepository.findAll(specification, pageable);
     }
 
     @Override

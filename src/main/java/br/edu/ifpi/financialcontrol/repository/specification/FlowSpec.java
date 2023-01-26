@@ -4,6 +4,7 @@ import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowFilter;
 import br.edu.ifpi.financialcontrol.domain.Flow;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,10 @@ public class FlowSpec {
 
     public static Specification<Flow> withFilter(FlowFilter flowFilter){
         return (root, query, builder) -> {
+            if(query.getResultType().equals(Flow.class)){
+                root.fetch("type", JoinType.INNER);
+                root.fetch("category", JoinType.INNER);
+            }
             List<Predicate> predicates = new ArrayList<>();
 
             if(flowFilter.getTypeId() != null){

@@ -2,6 +2,8 @@ package br.edu.ifpi.financialcontrol.service;
 
 import br.edu.ifpi.financialcontrol.domain.Flow;
 import br.edu.ifpi.financialcontrol.repository.specification.FlowSpec;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -11,7 +13,7 @@ public interface FlowService {
 
     Flow findByCodeOrThrowBadRequestException(String code);
 
-    List<Flow> findAll(Specification<Flow> specification);
+    Page<Flow> findAll(Specification<Flow> specification, Pageable pageable);
 
     Flow save(Flow flow);
 

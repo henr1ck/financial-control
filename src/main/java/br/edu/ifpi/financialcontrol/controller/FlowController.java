@@ -1,5 +1,6 @@
 package br.edu.ifpi.financialcontrol.controller;
 
+import br.edu.ifpi.financialcontrol.controller.dto.CustomFlowViewPage;
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowFilter;
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowRequestBody;
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowResponseBody;
@@ -10,6 +11,8 @@ import br.edu.ifpi.financialcontrol.service.FlowService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +31,14 @@ public class FlowController {
 
     @JsonView(FlowView.Simple.class)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<FlowResponseBody>> findAll(FlowFilter flowFilter) {
-        List<Flow> flows = flowService.findAll(FlowSpec.withFilter(flowFilter));
-        List<FlowResponseBody> flowResponseBodies = flows.stream()
+    public ResponseEntity<CustomFlowViewPage> findAll(FlowFilter flowFilter, Pageable pageable) throws ClassNotFoundException {
+        Page<Flow> flowPage = flowService.findAll(FlowSpec.withFilter(flowFilter), pageable);
+        List<FlowResponseBody> flowResponseBodies = flowPage.getContent().stream()
                 .map(this::convertToRepresentationObject)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(flowResponseBodies);
+        CustomFlowViewPage customFlowViewPage = new CustomFlowViewPage(flowResponseBodies, pageable, flowPage.getTotalElements());
+        return ResponseEntity.ok(customFlowViewPage);
     }
 
     @GetMapping(path = "/{flowCode}", produces = MediaType.APPLICATION_JSON_VALUE)
