@@ -3,6 +3,7 @@ package br.edu.ifpi.financialcontrol.config;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 

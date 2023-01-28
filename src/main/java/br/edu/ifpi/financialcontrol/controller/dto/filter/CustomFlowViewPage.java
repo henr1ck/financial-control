@@ -1,4 +1,4 @@
-package br.edu.ifpi.financialcontrol.controller.dto;
+package br.edu.ifpi.financialcontrol.controller.dto.filter;
 
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowResponseBody;
 import br.edu.ifpi.financialcontrol.controller.view.FlowView;

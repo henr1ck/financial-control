@@ -1,13 +1,15 @@
 package br.edu.ifpi.financialcontrol.controller;
 
-import br.edu.ifpi.financialcontrol.controller.dto.CustomFlowViewPage;
-import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowFilter;
+import br.edu.ifpi.financialcontrol.controller.dto.filter.CustomFlowViewPage;
+import br.edu.ifpi.financialcontrol.controller.dto.filter.FlowStatisticsFilter;
+import br.edu.ifpi.financialcontrol.controller.dto.filter.FlowFilter;
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowRequestBody;
 import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowResponseBody;
 import br.edu.ifpi.financialcontrol.controller.view.FlowView;
 import br.edu.ifpi.financialcontrol.domain.Flow;
 import br.edu.ifpi.financialcontrol.repository.specification.FlowSpec;
 import br.edu.ifpi.financialcontrol.service.FlowService;
+import br.edu.ifpi.financialcontrol.service.FlowStatisticsService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FlowController {
 
+    private final FlowStatisticsService statisticsService;
     private final FlowService flowService;
     private final ModelMapper modelMapper;
 

@@ -1,4 +1,4 @@
-package br.edu.ifpi.financialcontrol.controller.dto.flow;
+package br.edu.ifpi.financialcontrol.controller.dto.filter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class FlowFilter {
     private BigDecimal minValue;
     private BigDecimal maxValue;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private OffsetDateTime minDate;
+    private OffsetDateTime initialDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private OffsetDateTime maxDate;
+    private OffsetDateTime finalDate;
 }

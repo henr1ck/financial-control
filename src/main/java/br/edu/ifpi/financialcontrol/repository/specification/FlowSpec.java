@@ -1,6 +1,6 @@
 package br.edu.ifpi.financialcontrol.repository.specification;
 
-import br.edu.ifpi.financialcontrol.controller.dto.flow.FlowFilter;
+import br.edu.ifpi.financialcontrol.controller.dto.filter.FlowFilter;
 import br.edu.ifpi.financialcontrol.domain.Flow;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -35,12 +35,12 @@ public class FlowSpec {
                 predicates.add(builder.lessThanOrEqualTo(root.get("value"), flowFilter.getMaxValue()));
             }
 
-            if(flowFilter.getMinDate() != null){
-                predicates.add(builder.greaterThanOrEqualTo(root.get("date"), flowFilter.getMinDate()));
+            if(flowFilter.getInitialDate() != null){
+                predicates.add(builder.greaterThanOrEqualTo(root.get("date"), flowFilter.getInitialDate()));
             }
 
-            if(flowFilter.getMaxDate() != null){
-                predicates.add(builder.lessThanOrEqualTo(root.get("date"), flowFilter.getMaxDate()));
+            if(flowFilter.getFinalDate() != null){
+                predicates.add(builder.lessThanOrEqualTo(root.get("date"), flowFilter.getFinalDate()));
             }
 
             return builder.and(predicates.toArray(new Predicate[0]));
