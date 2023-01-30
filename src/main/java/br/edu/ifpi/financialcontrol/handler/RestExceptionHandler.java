@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -185,6 +186,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(problemDetails, status);
+    }
+
+    @ExceptionHandler(DateTimeException.class)
+    public ResponseEntity<ProblemDetails> handleDateTimeException(DateTimeException exception){
+        String message = exception.getMessage();
+        ProblemDetails details = ProblemDetails.builder()
+                .title("Date Time Error")
+                .detail(message)
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

@@ -15,50 +15,54 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Service
 @Log4j2
+@Service
 public class FlowStatisticsServiceImpl implements FlowStatisticsService {
 
     @PersistenceContext
     private EntityManager manager;
 
     @Override
-    public List<FlowStatistics> calculateFlowGroupByDate(FlowType flowType, FlowStatisticsFilter filter) {
+    public List<FlowStatistics> calculateFlowGroupByDate(FlowType flowType, FlowStatisticsFilter filter, String timeOffSet) {
         var builder = manager.getCriteriaBuilder();
         var query = builder.createQuery(FlowStatistics.class);
         var root = query.from(Flow.class);
         var predicates = new ArrayList<Predicate>();
 
-        Expression<Date> getDatefunction = builder.function("date", Date.class, root.get("date"));
+        log.info("TimeOffSet Parameter: {}", ZoneOffset.of(timeOffSet).toString());
+        Expression<Date> convertTzFunction = builder.function("convert_tz", Date.class, root.get("date"),
+                builder.literal("+00:00"), builder.literal(timeOffSet));
+
+        Expression<Date> dateFunction = builder.function("date", Date.class, convertTzFunction);
 
         Join<Flow, Type> flowTypeJoin = root.join("type");
-
         predicates.add(builder.equal(flowTypeJoin.get("id"), flowType.getId()));
 
         if (filter.getInitialDate() != null) {
-            predicates.add(builder.greaterThanOrEqualTo(getDatefunction, filter.getInitialDate()));
+            predicates.add(builder.greaterThanOrEqualTo(dateFunction, filter.getInitialDate()));
         }
 
         if (filter.getFinalDate() != null) {
-            predicates.add(builder.lessThanOrEqualTo(getDatefunction, filter.getFinalDate()));
+            predicates.add(builder.lessThanOrEqualTo(dateFunction, filter.getFinalDate()));
         }
 
         CompoundSelection<FlowStatistics> compoundSelection = builder.construct(FlowStatistics.class,
                 builder.count(root.get("id")),
                 builder.sum(root.get("value")),
-                getDatefunction
+                dateFunction
         );
 
-        query.select(compoundSelection).where(predicates.toArray(new Predicate[0])).groupBy(getDatefunction);
+        query.select(compoundSelection).where(predicates.toArray(new Predicate[0])).groupBy(dateFunction);
         return manager.createQuery(query).getResultList();
     }
 
     @Override
-    public List<FlowStatisticsWithCategoryName> calculateFlowStatisticsGroupByCategory(FlowType flowType, FlowStatisticsFilter filter) {
+    public List<FlowStatisticsWithCategoryName> calculateFlowStatisticsGroupByCategory(FlowType flowType, FlowStatisticsFilter filter, String timeOffSet) {
         var builder = manager.getCriteriaBuilder();
         var query = builder.createQuery(FlowStatisticsWithCategoryName.class);
         var root = query.from(Flow.class);
@@ -70,14 +74,18 @@ public class FlowStatisticsServiceImpl implements FlowStatisticsService {
         predicates.add(builder.equal(flowCategoryJoin.get("id"), query.from(Category.class).get("id")));
         predicates.add(builder.equal(flowTypeJoin.get("id"), flowType.getId()));
 
-        Expression<Date> getDatefunction = builder.function("date", Date.class, root.get("date"));
+        log.info("TimeOffSet Parameter: {}", ZoneOffset.of(timeOffSet).toString());
+        Expression<Date> convertTzFunction = builder.function("convert_tz", Date.class,
+                root.get("date"), builder.literal("+00:00"), builder.literal(timeOffSet));
+
+        Expression<Date> dateFunction = builder.function("date", Date.class, convertTzFunction);
 
         if(filter.getInitialDate() != null){
-            predicates.add(builder.greaterThanOrEqualTo(getDatefunction, filter.getInitialDate()));
+            predicates.add(builder.greaterThanOrEqualTo(dateFunction, filter.getInitialDate()));
         }
 
         if(filter.getFinalDate() != null){
-            predicates.add(builder.lessThanOrEqualTo(getDatefunction, filter.getFinalDate()));
+            predicates.add(builder.lessThanOrEqualTo(dateFunction, filter.getFinalDate()));
         }
 
         Path<BigDecimal> valueAttribute = root.get("value");
