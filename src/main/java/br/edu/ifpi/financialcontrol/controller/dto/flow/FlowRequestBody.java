@@ -2,10 +2,7 @@ package br.edu.ifpi.financialcontrol.controller.dto.flow;
 
 import br.edu.ifpi.financialcontrol.controller.dto.category.CategoryIdRequestBody;
 import br.edu.ifpi.financialcontrol.controller.dto.type.TypeIdRequestBody;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMin;
@@ -18,6 +15,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FlowRequestBody {
     @NotBlank @NotNull
     private String description;

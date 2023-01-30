@@ -1,9 +1,6 @@
 package br.edu.ifpi.financialcontrol.controller.dto.type;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -12,6 +9,7 @@ import javax.validation.constraints.Positive;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TypeIdRequestBody {
     @NotNull @Positive
     private Long id;
