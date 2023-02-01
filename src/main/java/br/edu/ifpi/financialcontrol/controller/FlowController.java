@@ -15,20 +15,20 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/flow")
 @RequiredArgsConstructor
 public class FlowController {
-
-    private final FlowStatisticsService statisticsService;
     private final FlowService flowService;
     private final ModelMapper modelMapper;
 
@@ -41,7 +41,9 @@ public class FlowController {
                 .collect(Collectors.toList());
 
         CustomFlowViewPage customFlowViewPage = new CustomFlowViewPage(flowResponseBodies, pageable, flowPage.getTotalElements());
-        return ResponseEntity.ok(customFlowViewPage);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS).cachePrivate())
+                .body(customFlowViewPage);
     }
 
     @GetMapping(path = "/{flowCode}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -6,12 +6,14 @@ import br.edu.ifpi.financialcontrol.domain.Category;
 import br.edu.ifpi.financialcontrol.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,7 +31,9 @@ public class CategoryController {
                 .map(this::convertToRepresentationObject)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(categoryResponseBodies);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS).cachePrivate())
+                .body(categoryResponseBodies);
     }
 
     @GetMapping(path = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
