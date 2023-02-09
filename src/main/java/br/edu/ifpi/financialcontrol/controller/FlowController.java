@@ -11,6 +11,8 @@ import br.edu.ifpi.financialcontrol.repository.specification.FlowSpec;
 import br.edu.ifpi.financialcontrol.service.FlowService;
 import br.edu.ifpi.financialcontrol.service.FlowStatisticsService;
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Tag(name = "Flow")
 @RestController
 @RequestMapping(path = "/flow")
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class FlowController {
     private final FlowService flowService;
     private final ModelMapper modelMapper;
 
+    @Operation
     @JsonView(FlowView.Simple.class)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomFlowViewPage> findAll(FlowFilter flowFilter, Pageable pageable) throws ClassNotFoundException {
