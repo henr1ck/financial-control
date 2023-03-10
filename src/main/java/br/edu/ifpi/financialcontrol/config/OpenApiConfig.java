@@ -12,20 +12,20 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean
-    public GroupedOpenApi groupedOpenApi(){
-        GroupedOpenApi groupedOpenApi = GroupedOpenApi.builder()
+    public GroupedOpenApi flow(){
+        return GroupedOpenApi.builder()
                 .packagesToScan("br.edu.ifpi.financialcontrol")
-                .pathsToMatch("/flow")
-                .group("Flow")
+                .pathsToMatch("/flow/**", "/category/**", "/statistics/**")
+                .pathsToExclude("/type")
+                .group("Financial Control")
+                .displayName("Financial Control")
                 .build();
-        return groupedOpenApi;
     }
 
     @Bean
     @OpenAPI30
     public OpenAPI customOpenApi(){
         OpenAPI openAPI = new OpenAPI();
-
         Contact contact = new Contact().url("https://github.com/henr1ck");
         contact.setName("GitHub");
 
@@ -33,6 +33,6 @@ public class OpenApiConfig {
                 .title("Financial Control API")
                 .contact(contact)
                 .description("Documentation for Financial Control API")
-                .version("1"));
+                .version("v1"));
     }
 }
