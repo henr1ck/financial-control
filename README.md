@@ -1,3 +1,5 @@
+Projeto simples que utilizo para por em prática os meus conhecimentos de Java e Spring Boot. 
+
 ## REFERÊNCIAS ÚTEIS
 
 ### SPRING BOOT
